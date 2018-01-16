@@ -3,7 +3,7 @@
 
 #include <Adafruit_NeoPixel_ZeroDMA.h>
 #define PIN        5
-#define NUM_PIXELS 121
+#define NUM_PIXELS 116
 
 #define CAMERA_RES    8
 #define INTERP_RES    23
