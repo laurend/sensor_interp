@@ -18,13 +18,6 @@ Adafruit_AMG88xx amg;
 float pixels[AMG88xx_PIXEL_ARRAY_SIZE];
 float pixelsGrid[CAMERA_RES][CAMERA_RES];
 
-// Test vars
-byte rainbowDelay = 20;
-byte colorAdvance = 0;
-unsigned long previousRainbowMillis = 0;
-int column;
-int row;
-
 #define MINTEMP 19 //low range of the sensor (this will be blue on the screen)
 #define MAXTEMP 32 //high range of the sensor (this will be red on the screen)
 
