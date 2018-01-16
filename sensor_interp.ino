@@ -1,4 +1,4 @@
-// Interpolate grid if sensor data, interpolate it to a larger grid and use it to light a bunch of Adafruit Neopixels.
+// Interpolate a grid of sensor data into a larger grid and use it to light a bunch of Adafruit Neopixels.
 // In this case, the sensor is an 8x8 AMG88XX IR camera.
 
 #include <Adafruit_NeoPixel_ZeroDMA.h>
@@ -18,10 +18,10 @@ Adafruit_AMG88xx amg;
 float pixels[AMG88xx_PIXEL_ARRAY_SIZE];
 float pixelsGrid[CAMERA_RES][CAMERA_RES];
 
-#define MINTEMP 19 //low range of the sensor (this will be blue on the screen)
-#define MAXTEMP 32 //high range of the sensor (this will be red on the screen)
+#define MINTEMP 19 // Low range of the sensor (this will be blue on the screen)
+#define MAXTEMP 32 // High range of the sensor (this will be red on the screen)
 
-// LED array. Defines pixels a grid rather than chain
+// LED array. Defines pixels a grid rather than chain.
 int ledArray[23][23] =
 {
   { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
