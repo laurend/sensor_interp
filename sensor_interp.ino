@@ -113,7 +113,7 @@ int val(int camera[CAMERA_RES * CAMERA_RES], int x, int y) {
   return camera[y * CAMERA_RES + x];
 }
 
-int set(int out[INTERP_RES * INTERP_RES], int x, int y, int val) {
+void set(int out[INTERP_RES * INTERP_RES], int x, int y, int val) {
   out[y * INTERP_RES + x] = val;
 }
 
@@ -147,9 +147,16 @@ void interpolate(int camera[CAMERA_RES * CAMERA_RES], int out[INTERP_RES * INTER
         } else {
           // the complicated case, find 4 corners
           // the last case, the four points are (lx, ly), (lx + 1, ly), (lx, ly + 1)
-          // and (lx + 1, ly + 1) - if you just average those 4 it will probably look fine.
-          // I tried to be fancy with weighted averages for the other cases.
-
+          // and (lx + 1, ly + 1).  interpolate to the mid point on the top edge
+          // and bottom edges and then interpolate between those two values.
+          wt = (INTERP_RES - 1) - ox * (CAMERA_RES - 1) + lx * (INTERP_RES - 1);
+          sum = val(camera, lx, ly) * wt + val(camera, lx + 1, ly) * (INTERP_RES - 1 - wt);
+          int tv = sum / (INTERP_RES - 1);
+          sum = val(camera, lx, ly + 1) * wt + val(camera, lx + 1, ly + 1) * (INTERP_RES - 1 - wt);
+          int bv = sum / (INTERP_RES - 1);
+          wt = (INTERP_RES - 1) - oy * (CAMERA_RES - 1) + ly * (INTERP_RES - 1);
+          sum = tv * wt + bv * (INTERP_RES - 1 - wt);
+          set(out, ox, oy, sum / (INTERP_RES - 1));
         }
       }
 
