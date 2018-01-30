@@ -16,7 +16,6 @@ Adafruit_NeoPixel_ZeroDMA strip(NUM_PIXELS, PIN, NEO_GRB);
 Adafruit_AMG88xx amg;
 
 float pixels[AMG88xx_PIXEL_ARRAY_SIZE];
-float pixelsGrid[CAMERA_RES][CAMERA_RES];
 
 #define MINTEMP 19 // Low range of the sensor (this will be blue on the screen)
 #define MAXTEMP 32 // High range of the sensor (this will be red on the screen)
@@ -78,8 +77,8 @@ void loop() {
   
   // Read all the camera pixels
   amg.readPixels(pixels);
-  
-  // Iterate through array converting temperature value to RGB
+
+  // Iterate through array converting temperature value to color index (0-255)
   int i;
   int pixels_color[AMG88xx_PIXEL_ARRAY_SIZE];
   for(i=0; i<(AMG88xx_PIXEL_ARRAY_SIZE); i++) {
@@ -92,21 +91,23 @@ void loop() {
   interpolate(pixels_color, pixels_color_interp);
   
   // Draw the pixels
-  for(i=0; i<(INTERP_RES * INTERP_RES); i++) {
-    
-    // Print test
-    // Serial.print(pixels_color_interp[i]);
-    // Serial.print(", ");
-    // if( (i + 1)%INTERP_RES == 0 ) { Serial.println(); }
-    // if( i == INTERP_RES * INTERP_RES - 1 ) {
-    //   Serial.println("end");
-    //   Serial.println();
-    //   delay(1000);
-    // }
-    
-    strip.setPixelColor(i, Rainbow(pixels_color_interp[i]));
-    strip.show();
-    
+  int pixels_color_interp_2d[INTERP_RES][INTERP_RES];
+  int count = 0;
+  for (int column = 0; column < INTERP_RES; column++) {
+    for (int row = 0; row < INTERP_RES; row++) {
+      
+      // Convert to 2d array
+      pixels_color_interp_2d[column][row] = pixels_color_interp[count];
+      count++;
+      
+      // Check for holes, set the color
+      int led = ledArray[row][column];
+      if (led != -1) {
+        strip.setPixelColor(led, Rainbow(pixels_color_interp_2d[row][column]));
+        strip.show();
+      }
+      
+    }
   }
 
 }
