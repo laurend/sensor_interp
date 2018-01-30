@@ -78,22 +78,37 @@ void loop() {
   
   // Read all the camera pixels
   amg.readPixels(pixels);
-  uint8_t camPixelColors[AMG88xx_PIXEL_ARRAY_SIZE];
   
-  // Iterate through 2d array converting temperature value to RGB
+  // Iterate through array converting temperature value to RGB
   int i;
-  for(i=0; i<AMG88xx_PIXEL_ARRAY_SIZE; i++) {
+  int pixels_color[AMG88xx_PIXEL_ARRAY_SIZE];
+  for(i=0; i<(AMG88xx_PIXEL_ARRAY_SIZE); i++) {
+    int colorIndex = map(pixels[i], MINTEMP, MAXTEMP, 0, 255);
+    pixels_color[i] = constrain(colorIndex, 0, 255);
+  }
+  
+  // Interpolate color values to larger grid
+  int pixels_color_interp[INTERP_RES * INTERP_RES];
+  interpolate(pixels_color, pixels_color_interp);
+  
+  // Draw the pixels
+  for(i=0; i<(INTERP_RES * INTERP_RES); i++) {
     
-    // Map temp to 0-255
-    uint8_t colorIndex = map(pixels[i], MINTEMP, MAXTEMP, 0, 255);
-    colorIndex = constrain(colorIndex, 0, 255);
-      
-    //draw the pixels!
-    strip.setPixelColor(i, Rainbow(colorIndex));
+    // Print test
+    // Serial.print(pixels_color_interp[i]);
+    // Serial.print(", ");
+    // if( (i + 1)%INTERP_RES == 0 ) { Serial.println(); }
+    // if( i == INTERP_RES * INTERP_RES - 1 ) {
+    //   Serial.println("end");
+    //   Serial.println();
+    //   delay(1000);
+    // }
+    
+    strip.setPixelColor(i, Rainbow(pixels_color_interp[i]));
     strip.show();
     
   }
-  
+
 }
 
 // Input a value 0 to 256 to get a color value.
